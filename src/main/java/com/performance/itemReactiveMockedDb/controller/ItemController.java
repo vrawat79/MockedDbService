@@ -1,5 +1,7 @@
 package com.performance.itemReactiveMockedDb.controller;
 
+import java.time.Duration;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
@@ -7,6 +9,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.performance.itemReactiveMockedDb.domain.Item;
 
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
 @RestController
 public class ItemController {
@@ -17,19 +21,21 @@ public class ItemController {
 	@GetMapping(path = "/items/{category}")
 	public Flux<Item> getItemsbyCategory(@PathVariable String category) {
 
-		
-		try {
-			Thread.sleep(200);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+//		Runnable t = () -> {
+//			try {
+//				Thread.sleep(200);
+//			} catch (InterruptedException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//		};
+//
+//		t.run();
 
-		
 		Item item1 = new Item();
 		item1.setBrand("IBM");
 		item1.setCategory("Laptop");
-		item1.setDescription("HP Spectre");	
+		item1.setDescription("HP Spectre");
 
 		Item item2 = new Item();
 		item2.setBrand("Dell");
@@ -39,9 +45,10 @@ public class ItemController {
 		Item item3 = new Item();
 		item3.setBrand("IBM");
 		item3.setCategory("Laptop");
-		item3.setDescription("HP Spectre");		
+		item3.setDescription("HP Spectre");
 
-		return Flux.just(item1, item2, item3);
+		Flux<Item> itemFlux = Flux.just(item1, item2, item3);
+		return itemFlux.delaySequence(Duration.ofMillis(200));
 
 	}
 
